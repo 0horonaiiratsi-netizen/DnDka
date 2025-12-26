@@ -11,12 +11,17 @@ const els = {
   details: document.getElementById("campaign-details"),
   title: document.getElementById("campaign-title"),
   meta: document.getElementById("campaign-meta"),
+  summary: document.getElementById("campaign-summary"),
   players: document.getElementById("player-list"),
   log: document.getElementById("log"),
   dmReply: document.getElementById("dm-reply"),
   dmGuidance: document.getElementById("dm-guidance"),
   dmResponse: document.getElementById("dm-response"),
   diceResult: document.getElementById("dice-result"),
+  refreshLog: document.getElementById("refresh-log"),
+  clearLog: document.getElementById("clear-log"),
+  deleteCampaign: document.getElementById("delete-campaign"),
+  downloadLog: document.getElementById("download-log"),
 };
 
 async function request(url, options = {}) {
@@ -50,15 +55,25 @@ async function selectCampaign(id) {
   renderCampaign(state.current);
   await loadLog();
   els.details.hidden = false;
+  els.deleteCampaign.disabled = false;
 }
 
 function renderCampaign(campaign) {
   els.title.textContent = campaign.title;
   els.meta.textContent = `${campaign.setting} • ${campaign.tone}`;
+  els.summary.textContent = campaign.summary || "No summary yet.";
   els.players.innerHTML = "";
   campaign.players.forEach((p) => {
     const li = document.createElement("li");
     li.innerHTML = `<span><strong>${p.character_name}</strong> (${p.character_class} ${p.level})</span><span class="muted">${p.name}</span>`;
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+    removeBtn.className = "secondary";
+    removeBtn.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      await removePlayer(p.id);
+    });
+    li.appendChild(removeBtn);
     els.players.appendChild(li);
   });
 }
@@ -149,5 +164,43 @@ els.diceForm.addEventListener("submit", async (event) => {
 });
 
 els.refresh.addEventListener("click", loadCampaigns);
+els.refreshLog.addEventListener("click", loadLog);
+els.clearLog.addEventListener("click", async () => {
+  if (!state.current) return alert("Select a campaign first.");
+  await request(`${apiBase}/api/campaigns/${state.current.id}/log`, { method: "DELETE" });
+  await loadLog();
+});
+els.deleteCampaign.addEventListener("click", async () => {
+  if (!state.current) return;
+  if (!confirm(`Delete campaign "${state.current.title}"? This cannot be undone.`)) return;
+  await request(`${apiBase}/api/campaigns/${state.current.id}`, { method: "DELETE" });
+  state.current = null;
+  els.details.hidden = true;
+  els.deleteCampaign.disabled = true;
+  await loadCampaigns();
+});
+els.downloadLog.addEventListener("click", () => {
+  if (!state.current || !els.log.children.length) return alert("No log to download.");
+  const text = Array.from(els.log.children)
+    .map((node) => node.textContent)
+    .join("\n\n");
+  const blob = new Blob([text], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${state.current.title.replace(/\\s+/g, \"_\")}_log.txt`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+});
+
+async function removePlayer(playerId) {
+  if (!state.current) return alert("Select a campaign first.");
+  await request(`${apiBase}/api/campaigns/${state.current.id}/players/${playerId}`, {
+    method: "DELETE",
+  });
+  const updated = await request(`${apiBase}/api/campaigns/${state.current.id}`);
+  state.current = updated;
+  renderCampaign(updated);
+}
 
 loadCampaigns().catch((err) => console.error(err));

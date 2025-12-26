@@ -10,6 +10,7 @@ from .dice import DiceError, roll
 from .models import (
     Campaign,
     CampaignCreate,
+    CampaignUpdate,
     DMRequest,
     DiceRequest,
     DiceResponse,
@@ -51,6 +52,22 @@ def create_campaign(payload: CampaignCreate):
     return store.add_campaign(payload)
 
 
+@app.put("/api/campaigns/{campaign_id}", response_model=Campaign)
+def update_campaign(campaign_id: str, payload: CampaignUpdate):
+    try:
+        return store.update_campaign(campaign_id, payload)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+
+@app.delete("/api/campaigns/{campaign_id}", status_code=204)
+def delete_campaign(campaign_id: str):
+    try:
+        store.delete_campaign(campaign_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+
 @app.get("/api/campaigns/{campaign_id}", response_model=Campaign)
 def get_campaign(campaign_id: str):
     campaign = store.get_campaign(campaign_id)
@@ -79,6 +96,23 @@ def add_player(campaign_id: str, payload: PlayerCreate):
 def add_message(campaign_id: str, message: Message):
     try:
         return store.add_message(campaign_id, message)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+
+@app.delete("/api/campaigns/{campaign_id}/players/{player_id}", response_model=Campaign)
+def remove_player(campaign_id: str, player_id: str):
+    try:
+        return store.remove_player(campaign_id, player_id)
+    except KeyError as err:
+        detail = "Player not found" if "Player" in str(err) else "Campaign not found"
+        raise HTTPException(status_code=404, detail=detail)
+
+
+@app.delete("/api/campaigns/{campaign_id}/log", response_model=Campaign)
+def clear_log(campaign_id: str):
+    try:
+        return store.clear_log(campaign_id)
     except KeyError:
         raise HTTPException(status_code=404, detail="Campaign not found")
 

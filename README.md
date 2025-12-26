@@ -4,10 +4,11 @@ DnDka is a lightweight FastAPI web app that hosts online Dungeons & Dragons sess
 
 ## Features
 - **Campaigns**: Create and list adventures with tone, setting, and summary.
-- **Players**: Track party members with names, classes, levels, and backstories.
-- **AI DM**: Ask for narration and scene guidance; responses are logged automatically.
-- **Session log**: View the chronological history of DM responses and prompts.
-- **Dice roller**: Resolve checks with expressions like `2d6+1`.
+- **Players**: Track party members with names, classes, levels, and backstories; remove them when needed.
+- **AI DM**: Ask for narration and scene guidance; prompts are stored in the log automatically.
+- **Session log**: View, refresh, clear, or download the chronological history of DM responses and prompts.
+- **Dice roller**: Resolve checks with expressions like `2d6+1` (tolerates spaces).
+- **Campaign management**: Update or delete campaigns via the API.
 
 ## Getting started
 1. Install dependencies:
@@ -25,11 +26,15 @@ Data persists to `data/db.json` so you can stop and restart the server without l
 
 ## API overview
 - `POST /api/campaigns` – create a campaign (`title`, `summary`, `tone`, `setting`).
+- `PUT /api/campaigns/{id}` – update a campaign (any of `title`, `summary`, `tone`, `setting`).
+- `DELETE /api/campaigns/{id}` – delete a campaign.
 - `GET /api/campaigns` – list campaigns.
 - `GET /api/campaigns/{id}` – get a campaign.
 - `POST /api/campaigns/{id}/players` – add a player (`name`, `character_name`, `character_class`, `level`, `backstory`).
+- `DELETE /api/campaigns/{id}/players/{player_id}` – remove a player.
 - `POST /api/campaigns/{id}/dm` – ask the AI DM for a reply (`prompt`, optional `campaign_state`).
 - `GET /api/campaigns/{id}/log` – retrieve chronological session messages.
+- `DELETE /api/campaigns/{id}/log` – clear the session log.
 - `POST /api/rolls` – roll dice (`expression` like `1d20+3`).
 
 ## AI behavior

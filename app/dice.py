@@ -23,7 +23,8 @@ class DiceError(ValueError):
 
 
 def roll(expression: str) -> DiceRoll:
-    match = dice_pattern.match(expression.lower().strip())
+    cleaned = expression.lower().strip().replace(" ", "")
+    match = dice_pattern.match(cleaned)
     if not match:
         raise DiceError("Dice expression must look like '2d6+1'.")
 
@@ -38,4 +39,4 @@ def roll(expression: str) -> DiceRoll:
         raise DiceError("Too many dice in one roll (max 50).")
 
     rolls = [random.randint(1, sides) for _ in range(count)]
-    return DiceRoll(expression=expression, rolls=rolls, modifier=modifier)
+    return DiceRoll(expression=cleaned, rolls=rolls, modifier=modifier)

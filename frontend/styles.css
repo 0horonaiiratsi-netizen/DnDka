@@ -58,6 +58,12 @@ main {
   gap: 0.5rem;
 }
 
+.action-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 h2, h3, h4 {
   margin: 0 0 0.75rem;
 }
@@ -92,6 +98,21 @@ button {
   cursor: pointer;
   transition: transform 120ms ease, box-shadow 120ms ease;
   border: none;
+}
+
+.secondary {
+  background: #0b1221;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.danger {
+  background: linear-gradient(90deg, #f97316, #ef4444);
+  color: #0b0f1a;
+}
+
+.muted {
+  color: var(--muted);
 }
 
 button:hover {

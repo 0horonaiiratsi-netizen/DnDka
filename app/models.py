@@ -10,7 +10,7 @@ class PlayerCreate(BaseModel):
     character_name: str
     character_class: str
     level: int = Field(ge=1, le=20, default=1)
-    backstory: str = ""
+    backstory: str = Field(default="", max_length=2000)
 
 
 class Player(PlayerCreate):
@@ -19,15 +19,22 @@ class Player(PlayerCreate):
 
 class CampaignCreate(BaseModel):
     title: str
-    summary: str = ""
-    tone: str = "classic fantasy"
-    setting: str = "Forgotten Realms"
+    summary: str = Field(default="", max_length=2000)
+    tone: str = Field(default="classic fantasy", max_length=120)
+    setting: str = Field(default="Forgotten Realms", max_length=120)
+
+
+class CampaignUpdate(BaseModel):
+    title: str | None = None
+    summary: str | None = Field(default=None, max_length=2000)
+    tone: str | None = Field(default=None, max_length=120)
+    setting: str | None = Field(default=None, max_length=120)
 
 
 class Message(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     author: str
-    text: str
+    text: str = Field(max_length=4000)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 

@@ -11,6 +11,12 @@ def test_basic_roll_structure():
     assert result.total == sum(result.rolls) + 1
 
 
+def test_roll_accepts_spaces():
+    result = roll(" 3d4 + 2 ")
+    assert result.expression == "3d4+2"
+    assert len(result.rolls) == 3
+
+
 def test_reject_bad_expression():
     with pytest.raises(DiceError):
         roll("bad")

@@ -27,7 +27,10 @@
       <section class="panel">
         <div class="panel-header">
           <h2>Campaigns</h2>
-          <button id="refresh">↻</button>
+          <div class="action-row">
+            <button id="refresh" title="Refresh campaigns">↻</button>
+            <button id="delete-campaign" class="danger" title="Delete selected campaign" disabled>Delete</button>
+          </div>
         </div>
         <ul id="campaign-list" class="list"></ul>
       </section>
@@ -37,6 +40,7 @@
           <h2 id="campaign-title">Campaign</h2>
           <span id="campaign-meta"></span>
         </div>
+        <p id="campaign-summary" class="muted"></p>
 
         <div class="grid">
           <div>
@@ -74,6 +78,11 @@
         <div class="grid">
           <div>
             <h3>Session log</h3>
+            <div class="action-row">
+              <button id="refresh-log" title="Reload log">↺</button>
+              <button id="clear-log" class="secondary" title="Clear log">Clear log</button>
+              <button id="download-log" class="secondary" title="Download log as text">Download</button>
+            </div>
             <div id="log" class="log"></div>
           </div>
           <div>
