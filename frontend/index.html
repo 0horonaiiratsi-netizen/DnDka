@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DnDka – AI Dungeon Master</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>DnDka</h1>
+      <p>AI Dungeon Master for online D&D sessions</p>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>Create a campaign</h2>
+        <form id="campaign-form">
+          <label>Title<input name="title" required placeholder="The Crimson Spire" /></label>
+          <label>Summary<textarea name="summary" placeholder="Quick pitch for the adventure."></textarea></label>
+          <label>Tone<input name="tone" value="classic fantasy" /></label>
+          <label>Setting<input name="setting" value="Forgotten Realms" /></label>
+          <button type="submit">Create campaign</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Campaigns</h2>
+          <div class="action-row">
+            <button id="refresh" title="Refresh campaigns">↻</button>
+            <button id="delete-campaign" class="danger" title="Delete selected campaign" disabled>Delete</button>
+          </div>
+        </div>
+        <ul id="campaign-list" class="list"></ul>
+      </section>
+
+      <section class="panel" id="campaign-details" hidden>
+        <div class="panel-header">
+          <h2 id="campaign-title">Campaign</h2>
+          <span id="campaign-meta"></span>
+        </div>
+        <p id="campaign-summary" class="muted"></p>
+
+        <div class="grid">
+          <div>
+            <h3>Players</h3>
+            <ul id="player-list" class="list"></ul>
+            <form id="player-form">
+              <label>Name<input name="name" required /></label>
+              <label>Character name<input name="character_name" required /></label>
+              <label>Class<input name="character_class" required /></label>
+              <label>Level<input name="level" type="number" min="1" max="20" value="1" /></label>
+              <label>Backstory<textarea name="backstory"></textarea></label>
+              <button type="submit">Add player</button>
+            </form>
+          </div>
+          <div>
+            <h3>AI Dungeon Master</h3>
+            <form id="dm-form">
+              <label>What happens next?
+                <textarea name="prompt" required placeholder="We open the door to the hidden vault..."></textarea>
+              </label>
+              <label>Extra state (optional)
+                <textarea name="campaign_state" placeholder="Room layout, player intentions, npc names..."></textarea>
+              </label>
+              <button type="submit">Ask the DM</button>
+            </form>
+            <div id="dm-response" class="dm-output" hidden>
+              <h4>DM reply</h4>
+              <p id="dm-reply"></p>
+              <h4>Guidance</h4>
+              <p id="dm-guidance"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <h3>Session log</h3>
+            <div class="action-row">
+              <button id="refresh-log" title="Reload log">↺</button>
+              <button id="clear-log" class="secondary" title="Clear log">Clear log</button>
+              <button id="download-log" class="secondary" title="Download log as text">Download</button>
+            </div>
+            <div id="log" class="log"></div>
+          </div>
+          <div>
+            <h3>Dice roller</h3>
+            <form id="dice-form">
+              <label>Expression<input name="expression" placeholder="2d6+1" required /></label>
+              <button type="submit">Roll</button>
+            </form>
+            <div id="dice-result" class="dm-output" hidden></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built for AI-assisted storytelling. Data is stored locally in <code>data/db.json</code>.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
